@@ -130,7 +130,25 @@ public class ReservationService {
                 .pId(res.getPId())
                 .build();
     }
-    //
+
+
+    //토큰의 유효성 검사
+    public boolean validate(String key) {
+        try {
+            Claims claims = jwtUtil.extractClaimsFromRedis(key);
+
+            if (claims.getExpiration() != null) {
+                return claims.getExpiration().after(new Date());
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    //토큰 값, 레빗MQ받아와서 DTO로 값 합쳐서 반환
     public ReservationDTO engraftReservationDTO(String token) {
         Claims bodyClaims = jwtUtil.extractClaims(token);
         Long uId = bodyClaims.get("id", Number.class).longValue();

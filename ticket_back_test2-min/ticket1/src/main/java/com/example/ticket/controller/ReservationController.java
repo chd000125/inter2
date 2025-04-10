@@ -30,7 +30,15 @@ public class ReservationController {
 
     @PostMapping("/info")
     public Reservation getUserInfo(@RequestBody Token token) {
-        return redisService.engraftReservationDTO(token);
+
+
+        // 1. 토큰 유효성 검사
+        boolean isValid = reservationService.validate(token);
+        if (!isValid) {
+            return ResponseEntity.status(401).body("유효하지 않은 토큰입니다.");
+
+        return reservationService.engraftReservationDTO(token);
+
     }
 
     /**
